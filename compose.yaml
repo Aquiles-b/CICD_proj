@@ -1,0 +1,15 @@
+services:
+  calc_server:
+    build: ./calcApp
+    command: python3 calcServer.py "192.168.3.6" "9998"
+
+    networks:
+      test_net:
+        ipv4_address: "192.168.3.6"
+
+networks:
+  test_net:
+    ipam:
+      driver: bridge
+      config:
+        - subnet: "192.168.3.0/24"

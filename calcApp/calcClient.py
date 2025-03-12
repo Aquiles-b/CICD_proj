@@ -15,13 +15,13 @@ if __name__ == "__main__":
         print("(Welcome to Calc App! Type help for help.)")
         while True:
             inp = input("> ")
+            if (inp in "quit"):
+                print("Bye")
+                break
             client_fd.send(inp.encode())
             res = client_fd.recv(2048).decode("utf-8")
             if (not res):
                 print("Connection lost!")
-                break
-            if (res in "quit"):
-                print("Bye")
                 break
             print(f"= {res}")
 

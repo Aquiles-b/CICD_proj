@@ -1,5 +1,6 @@
 import socketserver
 import calc
+import sys
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
@@ -15,7 +16,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 self.request.sendall(str(res).encode())
 
 if __name__ == "__main__":
-    HOST, PORT = "0.0.0.0", 9998
+    if (len(sys.argv) != 3):
+        print(f"Usage: {sys.argv[0]} <ip_addr> <port>")
+    HOST, PORT = sys.argv[1], int(sys.argv[2])
 
     print(f"Server starting on {HOST}:{PORT}")
     try:
