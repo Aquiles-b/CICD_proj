@@ -1,11 +1,19 @@
 services:
   calc_server:
     build: ./calcApp
+    container_name: calc_server
     command: python3 calcServer.py "192.168.3.6" "9998"
 
     networks:
       test_net:
         ipv4_address: "192.168.3.6"
+
+  jenkins:
+    build: ./jenkins_server
+    container_name: jenkins
+    networks:
+      test_net:
+        ipv4_address: "192.168.3.7"
 
 networks:
   test_net:
