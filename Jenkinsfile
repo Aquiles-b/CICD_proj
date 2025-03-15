@@ -1,25 +1,19 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:latest'
-            label 'docker'
-        }
-    }
+    agent any
     stages {
         stage('Build') {
             steps {
                 script {
-                    echo 'Building inside a Python Docker container'
+                    echo 'Building...'
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    echo 'Running tests inside a Python Docker container'
+                    echo 'Running...'
                 }
             }
         }
     }
 }
-
