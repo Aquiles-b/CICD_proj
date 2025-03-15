@@ -3,11 +3,26 @@ services:
     build: ./calcApp
     container_name: calc_server
 
-    command: python3 calcServer.py "192.168.3.6" "9998"
+    command: sh -c 'service ssh start && python3 calcServer.py "192.168.3.6" "9998"'
 
     networks:
       test_net:
         ipv4_address: "192.168.3.6"
+
+  jenkins-docker:
+    image: docker:dind
+    container_name: jenkins-docker 
+    privileged: true 
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs 
+    volumes:
+      - jenkins-docker-certs:/certs/client 
+      - jenkins_home:/var/jenkins_home
+    networks:
+      test_net:
+        aliases:
+          - docker
+    command: --storage-driver overlay2
 
   jenkins-server:
     build: ./jenkins_server
@@ -18,11 +33,17 @@ services:
         ipv4_address: "192.168.3.7"
     volumes:
       - jenkins_home:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
     environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
 
 volumes:
   jenkins_home:
+    driver: local
+  jenkins-docker-certs:
     driver: local
 
 networks:
