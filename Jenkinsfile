@@ -1,26 +1,29 @@
 pipeline {
-    agent {
-        dockerfile {
-            filename 'Dockerfile'
-            dir 'jenkins_server/PyDockerImg'
-            args '-u root'
-        }
-    }
+    agent any
 
     stages {
-        stage('Build') {
-            steps {
-                sh '''
-                    python3 calcApp/calcServer.py "0.0.0.0" "9998" &
-                '''
-            }
-        }
         stage('Test') {
+            agent {
+                dockerfile {
+                    filename 'Dockerfile'
+                    dir 'jenkins_server/PyDockerImg'
+                    args '-u root'
+                    reuseNode true
+                }
+            }
             steps {
-                sh '''
-                    robot -L DEBUG -d testCalcApp/output --variable SERVER_IP=0.0.0.0 --variable SERVER_PORT=9998 \
-                    testCalcApp/tests/calcTest.robot 
-                '''
+                script {
+                    sh '''
+                        python3 calcApp/calcServer.py "0.0.0.0" "9998" &
+                    '''
+                    def result = sh(script: 'robot -L DEBUG -d testCalcApp/output \
+                        --variable SERVER_IP=0.0.0.0 --variable SERVER_PORT=9998 \
+                        testCalcApp/tests/calcTest.robot', returnStatus: true)
+
+                    if (result != 0) {
+                        error "Test failed!!"
+                    }
+                }
             }
         }
 
@@ -28,9 +31,31 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        ssh root@192.168.3.6
+                        ansible-playbook -i '192.168.3.6,' -u root jenkins_server/deploy.yml
                     '''
                 }
+            }
+        }
+    }
+    
+    post {
+        always {
+            script {
+                def author = sh(script: 'git log -1 --pretty=%an', returnStdout: true).trim()
+                def email = sh(script: 'git log -1 --pretty=%ae', returnStdout: true).trim()
+
+                def logFiles = "testCalcApp/output/*.html"
+
+                def buildStatus = currentBuild.result ?: 'UNSTABLE'
+
+                def bodyMessage = "Hello,\n\nBuild Status: ${buildStatus}\n\nHere are the test logs for the last commit by ${author}."
+
+                emailext(
+                    subject: "Test Logs for Commit by ${author}",
+                    body: bodyMessage,
+                    to: "${email}",
+                    attachmentsPattern: logFiles
+                )
             }
         }
     }

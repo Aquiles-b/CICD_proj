@@ -1,0 +1,30 @@
+---
+- name: Deploy calcServer.py
+  hosts: 192.168.3.6
+  tasks:
+    - name: Copiar calcServer.py para a máquina remota
+      ansible.builtin.copy:
+        src: ../calcApp/
+        dest: /app/
+        mode: '0755'
+        force: yes
+
+    - name: Encontrar o PID do processo calcServer.py
+      ansible.builtin.shell: "pgrep -f 'python3 calcServer.py 192.168.3.6 9998'"
+      register: processo_calc
+      ignore_errors: yes
+
+    - name: Matar os processos calcServer.py se estiverem rodando
+      ansible.builtin.shell: "kill -9 {{ item }}"
+      with_items: "{{ processo_calc.stdout.splitlines() }}"
+      when: processo_calc.stdout != ""
+      ignore_errors: yes
+
+    - name: Esperar 3 segundos antes de reiniciar
+      ansible.builtin.pause:
+        seconds: 3
+
+    - name: Reiniciar calcServer.py
+      ansible.builtin.shell: "cd /app && python3 calcServer.py 192.168.3.6 9998 &"
+      async: 1
+      poll: 0

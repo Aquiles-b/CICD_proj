@@ -3,7 +3,7 @@ services:
     build: ./calcApp
     container_name: calc_server
 
-    command: sh -c 'service ssh start && python3 calcServer.py "192.168.3.6" "9998"'
+    command: sh /app/setup.sh 
 
     networks:
       test_net:
