@@ -2,12 +2,24 @@ import socketserver
 import calc
 import sys
 
+HELP_MSG = """
+Usage: <n1> <op> <n2>
+  = <n1> and <n2>: Float numbers
+  = <op>: Operator:
+    + : Addition
+    - : Subtraction
+    * : Multiplication""".encode()
+
 class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
         while True:
             data = self.request.recv(2048).decode("utf-8")
             if (not data):
                 break
+            if (data.lower() in "help"):
+                self.request.sendall(HELP_MSG)
+                continue
+
             exp = calc.validate_expression(data)
             if (not exp):
                 self.request.sendall("Invalid expression!".encode())

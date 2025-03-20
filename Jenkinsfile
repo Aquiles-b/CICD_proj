@@ -7,17 +7,16 @@ pipeline {
                 dockerfile {
                     filename 'Dockerfile'
                     dir 'jenkins_server/PyDockerImg'
-                    args '-u root'
                     reuseNode true
                 }
             }
             steps {
                 script {
                     sh '''
-                        python3 calcApp/calcServer.py "0.0.0.0" "9998" &
+                        python3 calcApp/calcServer.py "127.0.0.1" "9998" &
                     '''
                     def result = sh(script: 'robot -L DEBUG -d testCalcApp/output \
-                        --variable SERVER_IP=0.0.0.0 --variable SERVER_PORT=9998 \
+                        -v SERVER_IP:127.0.0.1 -v SERVER_PORT:9998 \
                         testCalcApp/tests/calcTest.robot', returnStatus: true)
 
                     if (result != 0) {

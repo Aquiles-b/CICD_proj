@@ -3,7 +3,7 @@ Documentation    Test expressions with a client
 Library    ${CURDIR}/../libs/calc_app_handler.py
 
 *** Variables ***
-${SERVER_IP}    192.168.3.6
+${SERVER_IP}    127.0.0.1
 ${SERVER_PORT}    9998
 
 *** Test Cases ***
@@ -48,7 +48,7 @@ Expressions
     # When The Expression Provided Is    10 / 3
     # Then The Result Should Be Equals To    3.3
 
-    # Invalid expressions
+    # # Invalid expressions
     # When The Expression Provided Is    10 / 0
     # Then The Command Must Be Unsuccessful
 
