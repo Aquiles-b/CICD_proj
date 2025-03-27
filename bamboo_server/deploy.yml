@@ -2,7 +2,7 @@
 - name: Deploy calcServer.py
   hosts: 192.168.3.6
   tasks:
-    - name: Copiar calcServer.py para a máquina remota
+    - name: Copiar calcServer para a máquina remota
       ansible.builtin.copy:
         src: ../calcApp/
         dest: /app/
@@ -20,9 +20,13 @@
       when: processo_calc.stdout != ""
       ignore_errors: yes
 
-    - name: Esperar 3 segundos antes de reiniciar
-      ansible.builtin.pause:
-        seconds: 3
+
+    - name: Esperar até a porta 9998 estar liberada
+      ansible.builtin.wait_for:
+        port: 9998
+        host: 192.168.3.6
+        state: drained
+        timeout: 300
 
     - name: Reiniciar calcServer.py
       ansible.builtin.shell: "cd /app && python3 calcServer.py 192.168.3.6 9998 &"

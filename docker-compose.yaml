@@ -9,41 +9,50 @@ services:
       test_net:
         ipv4_address: "192.168.3.6"
 
-  jenkins-docker:
-    image: docker:dind
-    container_name: jenkins-docker 
-    privileged: true 
-    environment:
-      - DOCKER_TLS_CERTDIR=/certs 
-    volumes:
-      - jenkins-docker-certs:/certs/client 
-      - jenkins_home:/var/jenkins_home
-    networks:
-      test_net:
-        aliases:
-          - docker
-    command: --storage-driver overlay2
+  bamboo-server:
+    image: atlassian/bamboo
+    container_name: bamboo-server
 
-  jenkins-server:
-    build: ./jenkins_server
-    container_name: jenkins-server
+    depends_on:
+      - db
 
     networks:
       test_net:
         ipv4_address: "192.168.3.7"
     volumes:
-      - jenkins_home:/var/jenkins_home
-      - jenkins-docker-certs:/certs/client:ro
+      - bambooVolume:/var/atlassian/application-data/bamboo
+
+  bamboo-agent:
+    build: ./bamboo_server/bamboo_agent_img
+    container_name: bamboo-agent
+
+    depends_on:
+      - bamboo-server
+
     environment:
-      - DOCKER_HOST=tcp://docker:2376
-      - DOCKER_CERT_PATH=/certs/client
-      - DOCKER_TLS_VERIFY=1
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - BAMBOO_SERVER=http://192.168.3.7:8085
+
+    networks:
+      test_net:
+        ipv4_address: "192.168.3.10"
+
+  db:
+    image: postgres:16
+    container_name: db
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    networks:
+      test_net:
+        ipv4_address: "192.168.3.8"
 
 volumes:
-  jenkins_home:
+  bambooVolume:
     driver: local
-  jenkins-docker-certs:
+  pgdata:
     driver: local
 
 networks:
