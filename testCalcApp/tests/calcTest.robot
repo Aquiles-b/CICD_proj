@@ -39,18 +39,18 @@ Expressions
     Then The Result Should Be Equals To    4.5
 
     # Div
-    # When The Expression Provided Is    5 / 2
-    # Then The Result Should Be Equals To    2.5
+    When The Expression Provided Is    5 / 2
+    Then The Result Should Be Equals To    2.5
 
-    # When The Expression Provided Is    10 / 3
-    # Then The Result Should Be Equals To    3.3
+    When The Expression Provided Is    10 / 3
+    Then The Result Should Be Equals To    3.3
 
-    # When The Expression Provided Is    10 / 3
-    # Then The Result Should Be Equals To    3.3
+    When The Expression Provided Is    10 / 3
+    Then The Result Should Be Equals To    3.3
 
-    # # Invalid expressions
-    # When The Expression Provided Is    10 / 0
-    # Then The Command Must Be Unsuccessful
+    # Invalid expressions
+    When The Expression Provided Is    10 / 0
+    Then The Command Must Be Unsuccessful
 
     # Invalid syntax
     When The Expression Provided Is    23 + 
