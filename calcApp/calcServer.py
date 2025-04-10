@@ -8,7 +8,8 @@ Usage: <n1> <op> <n2>
   = <op>: Operator:
     + : Addition
     - : Subtraction
-    * : Multiplication""".encode()
+    * : Multiplication
+    / : Division""".encode()
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
