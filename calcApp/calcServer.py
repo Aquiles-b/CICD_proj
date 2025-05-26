@@ -1,4 +1,4 @@
-import socketserver
+import socketserver, socket
 import calc
 import sys
 
@@ -8,8 +8,8 @@ Usage: <n1> <op> <n2>
   = <op>: Operator:
     + : Addition
     - : Subtraction
-    * : Multiplication
-    / : Division""".encode()
+    * : Multiplication""".encode()
+    # / : Division""".encode()
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
@@ -40,6 +40,7 @@ if __name__ == "__main__":
     print(f"Server starting on {HOST}:{PORT}")
     try:
         with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
+            server.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             server.serve_forever()
     except KeyboardInterrupt:
         print("\nServer closed.")

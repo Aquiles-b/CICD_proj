@@ -15,6 +15,8 @@ if __name__ == "__main__":
         print("(Welcome to Calc App! Type help for help.)")
         while True:
             inp = input("> ")
+            if (inp == ""):
+                continue
             if (inp in "quit"):
                 print("Bye")
                 break

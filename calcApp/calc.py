@@ -27,9 +27,9 @@ def evaluate_expression(exp: list) -> float:
         return exp[0] - exp[2]
     if (exp[1] == "*"):
         return exp[0] * exp[2]
-    if (exp[1] == "/"):
-        if (exp[2] == 0):
-            raise ZeroDivisionError()
-        return exp[0] / exp[2]
+    # if (exp[1] == "/"):
+    #     if (exp[2] == 0):
+    #         raise ZeroDivisionError()
+    #     return exp[0] / exp[2]
 
     return 0
