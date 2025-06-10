@@ -20,9 +20,9 @@ Feature: Test expressions with a client
       | "-4 * 8.25"    | "-33.0" |
       | "-2.0 * -2.25" | "4.5"   |
       # Div
-      # | "5 / 2"        | "2.5"   |
-      # | "10 / 3"       | "3.3"   |
-      # | "10 / 3"       | "3.3"   |
+      | "5 / 2"        | "2.5"   |
+      | "10 / 3"       | "3.3"   |
+      | "10 / 3"       | "3.3"   |
 
   Scenario Outline: Invalid expressions
     When The Expression Provided Is <expression>
@@ -30,7 +30,7 @@ Feature: Test expressions with a client
 
     Examples:
       | expression  |
-      # | "10 / 0"    |
+      | "10 / 0"    |
       | "23 + "     |
       | "- 3"       |
       | "23 ++ 3"   |
